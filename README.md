@@ -90,9 +90,16 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 NEXT_PUBLIC_SITE_URL=
 NEXT_PUBLIC_ADMIN_EMAIL=
+RESEND_API_KEY=
+BOOKING_EMAIL_FROM=
+BOOKING_NOTIFICATION_EMAIL=dangkhang.120304@gmail.com
 ```
 
 Do not expose `SUPABASE_SERVICE_ROLE_KEY` in client code.
+
+For booking email notifications, create a Resend API key and set `BOOKING_EMAIL_FROM`
+to a verified sender or domain in Resend. `BOOKING_NOTIFICATION_EMAIL` is the owner
+inbox that receives new booking notifications.
 
 ## Supabase Setup
 
@@ -119,6 +126,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_ADMIN_EMAIL=
+RESEND_API_KEY=
+BOOKING_EMAIL_FROM=
+BOOKING_NOTIFICATION_EMAIL=dangkhang.120304@gmail.com
 ```
 
 ## Admin Account Note
@@ -163,6 +173,7 @@ Storage:
 ## Real Booking Flow
 
 - Public `/booking` creates a real `PENDING` row in Supabase `bookings`.
+- After a booking is saved, the app sends an owner notification email through Resend when `RESEND_API_KEY`, `BOOKING_EMAIL_FROM`, and `BOOKING_NOTIFICATION_EMAIL` are configured.
 - Admin `/admin/bookings` can create a real `CONFIRMED` booking for phone/Zalo/Facebook customers.
 - Booking price is calculated from guest count and night count.
 - The booking is linked to `rooms.slug = 'gon-home-nguyen-can'` when the room exists.

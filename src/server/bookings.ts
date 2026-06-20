@@ -6,6 +6,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { dateDiffInNights, isSupabaseConfigured } from "@/lib/utils";
 import { bookingSchema, type BookingFormValues } from "@/lib/validations/booking";
+import { sendBookingNotification } from "./booking-email";
 
 export async function createBooking(input: BookingFormValues) {
   return persistBooking(input, "PENDING", "public");
@@ -81,6 +82,9 @@ async function persistBooking(
     return { ok: false, message: result.error.message };
   }
 
+  const bookingId =
+    canReadInsertedBooking && "data" in result ? result.data?.id : undefined;
+
   await syncCustomer({
     fullName: values.customerName,
     phone: values.customerPhone,
@@ -89,12 +93,29 @@ async function persistBooking(
     adminSupabase,
   });
 
+  const emailResult = await sendBookingNotification({
+    bookingId,
+    customerName: values.customerName,
+    customerPhone: values.customerPhone,
+    customerEmail: values.customerEmail || null,
+    checkIn: values.checkIn,
+    checkOut: values.checkOut,
+    guests: values.guests,
+    totalPrice,
+    status,
+    note: values.note || null,
+    source: values.source,
+  });
+
+  const savedMessage = bookingId
+    ? `Đã lưu booking thật. Mã booking: ${bookingId.slice(0, 8).toUpperCase()}.`
+    : "Đã lưu booking thật vào Supabase.";
+
   return {
     ok: true,
-    message:
-      canReadInsertedBooking && "data" in result && result.data?.id
-        ? `Đã lưu booking thật. Mã booking: ${result.data.id.slice(0, 8).toUpperCase()}.`
-        : "Đã lưu booking thật vào Supabase.",
+    message: emailResult.ok
+      ? `${savedMessage} ${emailResult.message}`
+      : `${savedMessage} Chưa gửi được email: ${emailResult.message}`,
   };
 }
 

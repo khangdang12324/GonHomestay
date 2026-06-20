@@ -1,3 +1,4 @@
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/utils";
 import type { Booking, Customer, GalleryImage, Price, Room, Setting } from "@/types";
@@ -201,5 +202,5 @@ export async function getPrices(): Promise<AdminDataResult<Price[]>> {
 
 async function getSupabaseOrNull() {
   if (!isSupabaseConfigured()) return null;
-  return createSupabaseServerClient();
+  return createSupabaseAdminClient() || createSupabaseServerClient();
 }

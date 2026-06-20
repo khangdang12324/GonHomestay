@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createBrowserSupabaseClient } from "@/lib/supabase/client";
+import { loginAdmin } from "@/server/admin-auth";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState(process.env.NEXT_PUBLIC_ADMIN_EMAIL || "");
@@ -14,30 +14,13 @@ export default function AdminLoginPage() {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     startTransition(async () => {
-      const supabase = createBrowserSupabaseClient();
-      if (!supabase) {
-        toast.error("Chưa cấu hình Supabase. Admin chỉ hoạt động với dữ liệu thật.");
+      const result = await loginAdmin({ email, password });
+      if (!result.ok) {
+        toast.error(result.message);
         return;
       }
 
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-
-      const profile = await supabase
-        .from("profiles")
-        .select("role")
-        .single();
-
-      if (profile.error || profile.data?.role !== "admin") {
-        await supabase.auth.signOut();
-        toast.error("Tài khoản này không có quyền admin.");
-        return;
-      }
-
-      toast.success("Đăng nhập thành công.");
+      toast.success(result.message);
       window.location.href = "/admin";
     });
   }
