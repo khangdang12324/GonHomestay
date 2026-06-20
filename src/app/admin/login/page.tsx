@@ -4,7 +4,6 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { loginAdminAndRedirect } from "@/server/admin-auth";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState(process.env.NEXT_PUBLIC_ADMIN_EMAIL || "");
@@ -14,11 +13,20 @@ export default function AdminLoginPage() {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     startTransition(async () => {
-      const result = await loginAdminAndRedirect({ email, password });
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const result = (await response.json()) as { ok: boolean; message: string };
+
       if (!result.ok) {
         toast.error(result.message);
         return;
       }
+
+      toast.success(result.message);
+      window.location.assign("/admin");
     });
   }
 
