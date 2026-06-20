@@ -100,7 +100,13 @@ export async function getBookingById(id: string): Promise<AdminDataResult<Bookin
     .eq("id", id)
     .single();
 
-  if (error) return { data: null, configured: true, error: error.message };
+  if (error) {
+    // Handle both "not found" and other errors
+    if (error.code === "PGRST116") {
+      return { data: null, configured: true };
+    }
+    return { data: null, configured: true, error: error.message };
+  }
 
   if (!data) return { data: null, configured: true };
 

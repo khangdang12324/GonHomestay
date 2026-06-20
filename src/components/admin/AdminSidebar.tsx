@@ -13,6 +13,7 @@ import {
 const items = [
   { href: "/admin", label: "Tổng quan", icon: BarChart3 },
   { href: "/admin/bookings", label: "Đặt phòng", icon: CalendarDays },
+  { href: "/admin/calendar", label: "Lịch quản lý", icon: CalendarDays },
   { href: "/admin/customers", label: "Khách hàng", icon: Users },
   { href: "/admin/rooms", label: "Phòng/căn", icon: BedDouble },
   { href: "/admin/prices", label: "Bảng giá", icon: Tags },
