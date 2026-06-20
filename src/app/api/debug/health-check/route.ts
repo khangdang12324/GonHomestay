@@ -23,9 +23,25 @@ export async function GET() {
     let bookingsTest = null;
     let bookingsError = null;
 
-    if (adminClient || serverClient) {
-      const supabase = adminClient || serverClient;
-      const { data, error } = await supabase
+    if (adminClient) {
+      const { data, error } = await adminClient
+        .from("bookings")
+        .select("*")
+        .limit(1);
+
+      if (error) {
+        bookingsError = {
+          code: error.code,
+          message: error.message,
+        };
+      } else {
+        bookingsTest = {
+          success: true,
+          count: data?.length || 0,
+        };
+      }
+    } else if (serverClient) {
+      const { data, error } = await serverClient
         .from("bookings")
         .select("*")
         .limit(1);

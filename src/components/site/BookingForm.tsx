@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input, Select, Textarea } from "@/components/ui/input";
+import { DateRangeCalendar } from "@/components/site/DateRangeCalendar";
 import { createBooking } from "@/server/bookings";
 import { bookingSchema, type BookingFormValues } from "@/lib/validations/booking";
 
@@ -31,6 +32,7 @@ export function BookingForm() {
     handleSubmit,
     reset,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<BookingFormValues>({
     resolver: zodResolver(bookingSchema),
@@ -78,11 +80,12 @@ export function BookingForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5 sm:gap-6">
       <Field label="Họ tên" error={errors.customerName?.message}>
         <Input {...register("customerName")} placeholder="Nguyễn Văn A" />
       </Field>
-      <div className="grid gap-4 sm:grid-cols-2">
+      
+      <div className="grid gap-5 sm:gap-6 sm:grid-cols-2">
         <Field label="Số điện thoại" error={errors.customerPhone?.message}>
           <Input {...register("customerPhone")} placeholder="09..." />
         </Field>
@@ -90,15 +93,26 @@ export function BookingForm() {
           <Input {...register("customerEmail")} type="email" placeholder="email@example.com" />
         </Field>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Ngày nhận phòng" error={errors.checkIn?.message}>
-          <Input {...register("checkIn")} type="date" />
-        </Field>
-        <Field label="Ngày trả phòng" error={errors.checkOut?.message}>
-          <Input {...register("checkOut")} type="date" />
-        </Field>
+
+      {/* Date Range Calendar */}
+      <div className="border-t border-[#e5d8c5] pt-5 sm:pt-6">
+        <DateRangeCalendar
+          value={{ checkIn, checkOut }}
+          onChange={(dates) => {
+            setValue("checkIn", dates.checkIn);
+            setValue("checkOut", dates.checkOut);
+          }}
+          roomId="default"
+        />
+        {errors.checkIn && (
+          <p className="mt-2 text-xs font-medium text-[#b42318]">{errors.checkIn.message}</p>
+        )}
+        {errors.checkOut && (
+          <p className="mt-2 text-xs font-medium text-[#b42318]">{errors.checkOut.message}</p>
+        )}
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
+
+      <div className="grid gap-5 sm:gap-6 sm:grid-cols-2">
         <Field label="Số khách" error={errors.guests?.message}>
           <Input {...register("guests", { valueAsNumber: true })} min={1} max={5} type="number" />
         </Field>
@@ -111,17 +125,18 @@ export function BookingForm() {
           </Select>
         </Field>
       </div>
+
       <Field label="Ghi chú" error={errors.note?.message}>
-        <Textarea {...register("note")} placeholder="Thời gian đến, nhu cầu BBQ, lưu ý khác..." />
+        <Textarea {...register("note")} placeholder="Thời gian đến, nhu cầu BBQ, lưu ý khác..." rows={4} />
       </Field>
 
       {/* Availability Status */}
       {(isCheckingAvailability || availabilityMessage) && (
         <div
-          className={`rounded-lg px-4 py-3 text-sm font-medium ${
+          className={`rounded-lg px-4 py-3 text-sm font-medium border ${
             availabilityMessage?.type === "success"
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
+              ? "bg-green-50 text-green-800 border-green-300"
+              : "bg-red-50 text-red-800 border-red-300"
           }`}
         >
           {isCheckingAvailability ? "Đang kiểm tra tính khả dụng..." : availabilityMessage?.text}
@@ -131,7 +146,7 @@ export function BookingForm() {
       <Button
         type="submit"
         disabled={isPending || (availabilityMessage?.type === "error") || isCheckingAvailability}
-        className="w-full sm:w-auto"
+        className="w-full h-12 text-base font-semibold"
       >
         {isPending ? "Đang gửi..." : "Gửi yêu cầu đặt phòng"}
       </Button>
