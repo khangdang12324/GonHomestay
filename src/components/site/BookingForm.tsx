@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useEffect, useTransition, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -22,15 +22,47 @@ const defaultValues: BookingFormValues = {
 
 export function BookingForm() {
   const [isPending, startTransition] = useTransition();
+  const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
+  const [availabilityMessage, setAvailabilityMessage] = useState<{ type: "success" | "error"; text: string } | null>(
+    null,
+  );
   const {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<BookingFormValues>({
     resolver: zodResolver(bookingSchema),
     defaultValues,
   });
+
+  const checkIn = watch("checkIn");
+  const checkOut = watch("checkOut");
+
+  // Check availability when dates change
+  useEffect(() => {
+    if (!checkIn || !checkOut || new Date(checkOut) <= new Date(checkIn)) {
+      setAvailabilityMessage(null);
+      return;
+    }
+
+    setIsCheckingAvailability(true);
+    fetch(`/api/bookings/available-dates?checkIn=${checkIn}&checkOut=${checkOut}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setAvailabilityMessage({
+          type: data.available ? "success" : "error",
+          text: data.message,
+        });
+      })
+      .catch(() => {
+        setAvailabilityMessage(null);
+      })
+      .finally(() => {
+        setIsCheckingAvailability(false);
+      });
+  }, [checkIn, checkOut]);
 
   function onSubmit(values: BookingFormValues) {
     startTransition(async () => {
@@ -38,6 +70,7 @@ export function BookingForm() {
       if (result.ok) {
         toast.success(result.message);
         reset(defaultValues);
+        setAvailabilityMessage(null);
       } else {
         toast.error(result.message);
       }
@@ -81,7 +114,25 @@ export function BookingForm() {
       <Field label="Ghi chú" error={errors.note?.message}>
         <Textarea {...register("note")} placeholder="Thời gian đến, nhu cầu BBQ, lưu ý khác..." />
       </Field>
-      <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
+
+      {/* Availability Status */}
+      {(isCheckingAvailability || availabilityMessage) && (
+        <div
+          className={`rounded-lg px-4 py-3 text-sm font-medium ${
+            availabilityMessage?.type === "success"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {isCheckingAvailability ? "Đang kiểm tra tính khả dụng..." : availabilityMessage?.text}
+        </div>
+      )}
+
+      <Button
+        type="submit"
+        disabled={isPending || (availabilityMessage?.type === "error") || isCheckingAvailability}
+        className="w-full sm:w-auto"
+      >
         {isPending ? "Đang gửi..." : "Gửi yêu cầu đặt phòng"}
       </Button>
     </form>
