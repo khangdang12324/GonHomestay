@@ -53,7 +53,11 @@ export async function POST(request: NextRequest) {
 
   if (userError || !userData.user) {
     await supabase.auth.signOut();
-    const response = createJsonResponse(false, "Không xác thực được phiên đăng nhập.", 401);
+    const response = createJsonResponse(
+      false,
+      "Không xác thực được phiên đăng nhập.",
+      401,
+    );
     return client.applyTo(response);
   }
 
@@ -65,7 +69,11 @@ export async function POST(request: NextRequest) {
 
   if (profileError || profile?.role !== "admin") {
     await supabase.auth.signOut();
-    const response = createJsonResponse(false, "Tài khoản này không có quyền admin.", 403);
+    const response = createJsonResponse(
+      false,
+      "Tài khoản này không có quyền admin.",
+      403,
+    );
     return client.applyTo(response);
   }
 
