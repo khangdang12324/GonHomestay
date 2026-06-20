@@ -90,6 +90,39 @@ export async function getBookings(): Promise<AdminDataResult<Booking[]>> {
   };
 }
 
+export async function getBookingById(id: string): Promise<AdminDataResult<Booking | null>> {
+  const supabase = await getSupabaseOrNull();
+  if (!supabase) return { data: null, configured: false };
+
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) return { data: null, configured: true, error: error.message };
+
+  if (!data) return { data: null, configured: true };
+
+  return {
+    configured: true,
+    data: {
+      id: data.id,
+      customerName: data.customer_name,
+      customerPhone: data.customer_phone,
+      customerEmail: data.customer_email || undefined,
+      checkIn: data.check_in,
+      checkOut: data.check_out,
+      guests: data.guests,
+      totalPrice: data.total_price || 0,
+      status: data.status,
+      note: data.note || undefined,
+      source: data.source || undefined,
+      createdAt: data.created_at,
+    } as Booking,
+  };
+}
+
 export async function getRooms(): Promise<AdminDataResult<Room[]>> {
   const supabase = await getSupabaseOrNull();
   if (!supabase) return { data: [], configured: false };

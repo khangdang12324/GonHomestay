@@ -26,6 +26,14 @@ export const bookingStatusLabels: Record<BookingStatus, string> = {
   CANCELLED: "Đã hủy",
 };
 
+export const bookingStatusOrder: BookingStatus[] = [
+  "PENDING",
+  "CONFIRMED",
+  "CHECKED_IN",
+  "CHECKED_OUT",
+  "CANCELLED",
+];
+
 export const roomStatusLabels: Record<RoomStatus, string> = {
   AVAILABLE: "Sẵn sàng",
   BOOKED: "Đã đặt",

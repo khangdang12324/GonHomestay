@@ -3,6 +3,7 @@
 /* eslint-disable react-hooks/incompatible-library */
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import {
   createColumnHelper,
   flexRender,
@@ -65,9 +66,11 @@ export function BookingTable({ bookings }: { bookings: Booking[] }) {
         header: "Hành động",
         cell: ({ row }) => (
           <div className="flex gap-2">
-            <Button type="button" variant="outline" className="h-9 px-3">
-              Chi tiết
-            </Button>
+            <Link href={`/admin/bookings/${row.original.id}`}>
+              <Button type="button" variant="outline" className="h-9 px-3">
+                Chi tiết
+              </Button>
+            </Link>
             <Button
               type="button"
               variant="secondary"

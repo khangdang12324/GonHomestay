@@ -46,8 +46,8 @@ NEXT_PUBLIC_ADMIN_EMAIL = pandorakhang@gmail.com
 
 Các cập nhật sau đã được thực hiện:
 
-- ✅ Tạo middleware tại `src/middleware.ts` để làm mới session
 - ✅ Cải thiện route handler login tại `src/app/api/admin/login/route.ts`
+- ✅ Cải thiện proxy.ts để refresh session trên mỗi request
 
 ### 4. Deploy lại
 
@@ -65,7 +65,7 @@ Sau khi set environment variables, cần re-deploy:
 4. Kiểm tra user có role `admin` trong bảng `profiles`
 5. Set session cookies
 6. Frontend redirect tới `/admin`
-7. Middleware (`src/middleware.ts`) làm mới session
+7. Proxy (`src/proxy.ts`) làm mới session
 8. Trang `/admin` verify session và hiển thị dashboard
 
 ## Troubleshooting
