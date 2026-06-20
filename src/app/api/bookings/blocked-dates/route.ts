@@ -27,8 +27,8 @@ export async function GET(request: NextRequest) {
     // Get all confirmed bookings for this room
     const { data: bookings, error } = await supabase
       .from("bookings")
-      .select("checkIn, checkOut, status")
-      .eq("roomId", roomId)
+      .select("check_in, check_out, status")
+      .eq("room_id", roomId)
       .eq("status", "CONFIRMED");
 
     if (error) {
@@ -42,9 +42,9 @@ export async function GET(request: NextRequest) {
     // Generate list of blocked dates
     const blockedDates = new Set<string>();
 
-    bookings?.forEach((booking) => {
-      const checkIn = new Date(booking.checkIn);
-      const checkOut = new Date(booking.checkOut);
+    bookings?.forEach((booking: any) => {
+      const checkIn = new Date(booking.check_in);
+      const checkOut = new Date(booking.check_out);
 
       // Include check-in day and all days until check-out (exclusive)
       for (let d = new Date(checkIn); d < checkOut; d.setDate(d.getDate() + 1)) {

@@ -40,7 +40,7 @@ export function DateRangeCalendar({
 
   // Fetch blocked dates
   useEffect(() => {
-    if (!roomId) return;
+    if (!roomId || roomId === "default") return;
 
     const fetchBlockedDates = async () => {
       setLoading(true);
