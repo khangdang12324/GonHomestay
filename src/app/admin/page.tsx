@@ -6,10 +6,13 @@ import { RevenueChart } from "@/components/admin/RevenueChart";
 import { StatsCard } from "@/components/admin/StatsCard";
 import { formatCurrencyVND, formatDateVN } from "@/lib/utils";
 import { getBookings } from "@/server/admin-data";
+import { requireAdminSession } from "@/server/admin-session";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
+  await requireAdminSession();
+
   const result = await getBookings();
   const bookings = result.data;
   const pending = bookings.filter((booking) => booking.status === "PENDING").length;

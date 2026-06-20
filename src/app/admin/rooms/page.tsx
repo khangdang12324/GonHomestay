@@ -6,10 +6,13 @@ import { ImageFrame } from "@/components/site/ImageFrame";
 import { roomStatusLabels } from "@/data/constants";
 import { formatCurrencyVND } from "@/lib/utils";
 import { getRooms } from "@/server/admin-data";
+import { requireAdminSession } from "@/server/admin-session";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminRoomsPage() {
+  await requireAdminSession();
+
   const result = await getRooms();
 
   return (

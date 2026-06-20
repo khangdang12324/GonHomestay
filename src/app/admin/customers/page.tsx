@@ -3,10 +3,13 @@ import { AdminNotice } from "@/components/admin/AdminNotice";
 import { Card } from "@/components/ui/card";
 import { formatCurrencyVND } from "@/lib/utils";
 import { getCustomers } from "@/server/admin-data";
+import { requireAdminSession } from "@/server/admin-session";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminCustomersPage() {
+  await requireAdminSession();
+
   const result = await getCustomers();
 
   return (

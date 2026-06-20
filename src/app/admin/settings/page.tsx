@@ -2,10 +2,13 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminNotice } from "@/components/admin/AdminNotice";
 import { SettingsForm } from "@/components/admin/SettingsForm";
 import { getSettings } from "@/server/admin-data";
+import { requireAdminSession } from "@/server/admin-session";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminSettingsPage() {
+  await requireAdminSession();
+
   const result = await getSettings();
 
   return (
