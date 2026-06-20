@@ -7,6 +7,8 @@ import { roomStatusLabels } from "@/data/constants";
 import { formatCurrencyVND } from "@/lib/utils";
 import { getRooms } from "@/server/admin-data";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminRoomsPage() {
   const result = await getRooms();
 

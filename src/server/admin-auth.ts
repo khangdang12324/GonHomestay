@@ -1,6 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 type AdminLoginResult = {
   ok: boolean;
@@ -46,4 +47,20 @@ export async function loginAdmin({
     ok: true,
     message: "Đăng nhập thành công.",
   };
+}
+
+export async function loginAdminAndRedirect({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) {
+  const result = await loginAdmin({ email, password });
+
+  if (!result.ok) {
+    return result;
+  }
+
+  redirect("/admin");
 }

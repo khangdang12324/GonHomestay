@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { loginAdmin } from "@/server/admin-auth";
+import { loginAdminAndRedirect } from "@/server/admin-auth";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState(process.env.NEXT_PUBLIC_ADMIN_EMAIL || "");
@@ -14,14 +14,11 @@ export default function AdminLoginPage() {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     startTransition(async () => {
-      const result = await loginAdmin({ email, password });
+      const result = await loginAdminAndRedirect({ email, password });
       if (!result.ok) {
         toast.error(result.message);
         return;
       }
-
-      toast.success(result.message);
-      window.location.href = "/admin";
     });
   }
 

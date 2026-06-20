@@ -3,6 +3,8 @@ import { AdminNotice } from "@/components/admin/AdminNotice";
 import { SettingsForm } from "@/components/admin/SettingsForm";
 import { getSettings } from "@/server/admin-data";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminSettingsPage() {
   const result = await getSettings();
 

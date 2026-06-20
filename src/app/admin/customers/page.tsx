@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/card";
 import { formatCurrencyVND } from "@/lib/utils";
 import { getCustomers } from "@/server/admin-data";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminCustomersPage() {
   const result = await getCustomers();
 

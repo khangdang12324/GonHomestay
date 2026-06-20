@@ -7,6 +7,8 @@ import { StatsCard } from "@/components/admin/StatsCard";
 import { formatCurrencyVND, formatDateVN } from "@/lib/utils";
 import { getBookings } from "@/server/admin-data";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPage() {
   const result = await getBookings();
   const bookings = result.data;

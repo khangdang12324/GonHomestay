@@ -3,6 +3,8 @@ import { AdminNotice } from "@/components/admin/AdminNotice";
 import { PriceTable } from "@/components/admin/PriceTable";
 import { getPrices } from "@/server/admin-data";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPricesPage() {
   const result = await getPrices();
 

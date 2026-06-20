@@ -4,6 +4,8 @@ import { AdminNotice } from "@/components/admin/AdminNotice";
 import { BookingTable } from "@/components/admin/BookingTable";
 import { getBookings } from "@/server/admin-data";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminBookingsPage() {
   const result = await getBookings();
 

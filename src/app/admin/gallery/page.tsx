@@ -3,6 +3,8 @@ import { AdminNotice } from "@/components/admin/AdminNotice";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { getGalleryImages } from "@/server/admin-data";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminGalleryPage() {
   const result = await getGalleryImages();
 
