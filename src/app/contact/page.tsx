@@ -12,7 +12,7 @@ export default function ContactPage() {
   return (
     <>
       <section className="bg-[#fffaf2] py-16">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#8a5a36]">
               Liên hệ
@@ -26,7 +26,7 @@ export default function ContactPage() {
               <p>Địa chỉ: {siteConfig.address}</p>
             </div>
           </div>
-          <div className="rounded-lg border border-[#e5d8c5] bg-white p-6">
+          <div className="w-full max-w-xl bg-white p-6 rounded-2xl shadow-sm">
             <BookingForm />
           </div>
         </div>

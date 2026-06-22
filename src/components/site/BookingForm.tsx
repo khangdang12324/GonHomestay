@@ -42,30 +42,6 @@ export function BookingForm() {
   const checkIn = watch("checkIn");
   const checkOut = watch("checkOut");
 
-  // Check availability when dates change
-  useEffect(() => {
-    if (!checkIn || !checkOut || new Date(checkOut) <= new Date(checkIn)) {
-      setAvailabilityMessage(null);
-      return;
-    }
-
-    setIsCheckingAvailability(true);
-    fetch(`/api/bookings/available-dates?checkIn=${checkIn}&checkOut=${checkOut}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setAvailabilityMessage({
-          type: data.available ? "success" : "error",
-          text: data.message,
-        });
-      })
-      .catch(() => {
-        setAvailabilityMessage(null);
-      })
-      .finally(() => {
-        setIsCheckingAvailability(false);
-      });
-  }, [checkIn, checkOut]);
-
   function onSubmit(values: BookingFormValues) {
     startTransition(async () => {
       const result = await createBooking(values);
@@ -85,12 +61,12 @@ export function BookingForm() {
         <Input {...register("customerName")} placeholder="Nguyễn Văn A" />
       </Field>
       
-      <div className="grid gap-5 sm:gap-6 sm:grid-cols-2">
+      <div className="flex flex-col sm:flex-row gap-4">
         <Field label="Số điện thoại" error={errors.customerPhone?.message}>
-          <Input {...register("customerPhone")} placeholder="09..." />
+          <Input {...register("customerPhone")} placeholder="09..." className="w-full" />
         </Field>
         <Field label="Email (nếu có)" error={errors.customerEmail?.message}>
-          <Input {...register("customerEmail")} type="email" placeholder="email@example.com" />
+          <Input {...register("customerEmail")} type="email" placeholder="email@example.com" className="w-full" />
         </Field>
       </div>
 
@@ -99,8 +75,8 @@ export function BookingForm() {
         <DateRangeCalendar
           value={{ checkIn, checkOut }}
           onChange={(dates) => {
-            setValue("checkIn", dates.checkIn);
-            setValue("checkOut", dates.checkOut);
+            setValue("checkIn", dates.checkIn, { shouldValidate: true });
+            setValue("checkOut", dates.checkOut, { shouldValidate: true });
           }}
           roomId="default"
         />
@@ -112,12 +88,12 @@ export function BookingForm() {
         )}
       </div>
 
-      <div className="grid gap-5 sm:gap-6 sm:grid-cols-2">
+      <div className="flex flex-col sm:flex-row gap-4">
         <Field label="Số khách" error={errors.guests?.message}>
-          <Input {...register("guests", { valueAsNumber: true })} min={1} max={5} type="number" />
+          <Input {...register("guests", { valueAsNumber: true })} min={1} max={5} type="number" className="w-full" />
         </Field>
         <Field label="Nguồn khách biết đến" error={errors.source?.message}>
-          <Select {...register("source")}>
+          <Select {...register("source")} className="w-full">
             <option>Facebook</option>
             <option>Google</option>
             <option>Bạn bè</option>
@@ -130,22 +106,9 @@ export function BookingForm() {
         <Textarea {...register("note")} placeholder="Thời gian đến, nhu cầu BBQ, lưu ý khác..." rows={4} />
       </Field>
 
-      {/* Availability Status */}
-      {(isCheckingAvailability || availabilityMessage) && (
-        <div
-          className={`rounded-lg px-4 py-3 text-sm font-medium border ${
-            availabilityMessage?.type === "success"
-              ? "bg-green-50 text-green-800 border-green-300"
-              : "bg-red-50 text-red-800 border-red-300"
-          }`}
-        >
-          {isCheckingAvailability ? "Đang kiểm tra tính khả dụng..." : availabilityMessage?.text}
-        </div>
-      )}
-
       <Button
         type="submit"
-        disabled={isPending || (availabilityMessage?.type === "error") || isCheckingAvailability}
+        disabled={isPending}
         className="w-full h-12 text-base font-semibold"
       >
         {isPending ? "Đang gửi..." : "Gửi yêu cầu đặt phòng"}
@@ -164,7 +127,7 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <label className="grid gap-2 text-sm font-medium text-[#3a2a1d]">
+    <label className="grid gap-2 text-sm font-medium text-[#3a2a1d] w-full">
       {label}
       {children}
       {error ? <span className="text-xs font-medium text-[#b42318]">{error}</span> : null}

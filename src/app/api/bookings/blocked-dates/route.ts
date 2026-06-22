@@ -1,19 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { primaryRoom } from "@/data/property";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const roomId = searchParams.get("roomId");
-
-    if (!roomId) {
-      return NextResponse.json(
-        { error: "roomId is required" },
-        { status: 400 }
-      );
-    }
+    let roomId = searchParams.get("roomId");
 
     const supabase = await createSupabaseServerClient();
 
@@ -24,12 +18,32 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get all confirmed bookings for this room
-    const { data: bookings, error } = await supabase
+    // Map 'default' to the actual database room ID
+    if (!roomId || roomId === "default") {
+      const { data: room } = await supabase
+        .from("rooms")
+        .select("id")
+        .eq("slug", primaryRoom.slug)
+        .maybeSingle();
+      
+      if (room?.id) {
+        roomId = room.id;
+      }
+    }
+
+    let query = supabase
       .from("bookings")
       .select("check_in, check_out, status")
-      .eq("room_id", roomId)
-      .eq("status", "CONFIRMED");
+      .in("status", ["CONFIRMED", "CHECKED_IN", "CHECKED_OUT"]);
+
+    // If a specific roomId is provided (not 'default'), filter by it.
+    // Otherwise, since there's only 1 room in this homestay, we can safely return all confirmed bookings.
+    if (roomId && roomId !== "default") {
+      query = query.eq("room_id", roomId);
+    }
+
+    // Get all confirmed bookings
+    const { data: bookings, error } = await query;
 
     if (error) {
       console.error("Error fetching bookings:", error);

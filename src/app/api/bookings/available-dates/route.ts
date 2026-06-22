@@ -20,6 +20,6 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     available: result.available,
-    message: result.available ? "Phòng còn trống" : `Phòng đã được đặt bởi ${result.conflictingBooking?.customerName}`,
+    message: result.available ? "Phòng còn trống" : "Phòng đã được đặt trong khoảng thời gian này.",
   });
 }
