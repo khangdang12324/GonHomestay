@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     if (!supabase) {
       return NextResponse.json(
         { blockedDates: [], message: "Supabase not configured" },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
         .select("id")
         .eq("slug", primaryRoom.slug)
         .maybeSingle();
-      
+
       if (room?.id) {
         roomId = room.id;
       }
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
       console.error("Error fetching bookings:", error);
       return NextResponse.json(
         { blockedDates: [], error: error.message },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
@@ -61,7 +61,11 @@ export async function GET(request: NextRequest) {
       const checkOut = new Date(booking.check_out);
 
       // Include check-in day and all days until check-out (exclusive)
-      for (let d = new Date(checkIn); d < checkOut; d.setDate(d.getDate() + 1)) {
+      for (
+        let d = new Date(checkIn);
+        d < checkOut;
+        d.setDate(d.getDate() + 1)
+      ) {
         const dateStr = d.toISOString().split("T")[0];
         blockedDates.add(dateStr);
       }
@@ -78,7 +82,7 @@ export async function GET(request: NextRequest) {
         blockedDates: [],
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 200 }
+      { status: 200 },
     );
   }
 }

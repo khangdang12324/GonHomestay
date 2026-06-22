@@ -8,7 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Input, Select, Textarea } from "@/components/ui/input";
 import { DateRangeCalendar } from "@/components/site/DateRangeCalendar";
 import { createBooking } from "@/server/bookings";
-import { bookingSchema, type BookingFormValues } from "@/lib/validations/booking";
+import {
+  bookingSchema,
+  type BookingFormValues,
+} from "@/lib/validations/booking";
 
 const defaultValues: BookingFormValues = {
   customerName: "",
@@ -24,9 +27,10 @@ const defaultValues: BookingFormValues = {
 export function BookingForm() {
   const [isPending, startTransition] = useTransition();
   const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
-  const [availabilityMessage, setAvailabilityMessage] = useState<{ type: "success" | "error"; text: string } | null>(
-    null,
-  );
+  const [availabilityMessage, setAvailabilityMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
   const {
     register,
     handleSubmit,
@@ -60,13 +64,22 @@ export function BookingForm() {
       <Field label="Họ tên" error={errors.customerName?.message}>
         <Input {...register("customerName")} placeholder="Nguyễn Văn A" />
       </Field>
-      
+
       <div className="flex flex-col sm:flex-row gap-4">
         <Field label="Số điện thoại" error={errors.customerPhone?.message}>
-          <Input {...register("customerPhone")} placeholder="09..." className="w-full" />
+          <Input
+            {...register("customerPhone")}
+            placeholder="09..."
+            className="w-full"
+          />
         </Field>
         <Field label="Email (nếu có)" error={errors.customerEmail?.message}>
-          <Input {...register("customerEmail")} type="email" placeholder="email@example.com" className="w-full" />
+          <Input
+            {...register("customerEmail")}
+            type="email"
+            placeholder="email@example.com"
+            className="w-full"
+          />
         </Field>
       </div>
 
@@ -81,16 +94,26 @@ export function BookingForm() {
           roomId="default"
         />
         {errors.checkIn && (
-          <p className="mt-2 text-xs font-medium text-[#b42318]">{errors.checkIn.message}</p>
+          <p className="mt-2 text-xs font-medium text-[#b42318]">
+            {errors.checkIn.message}
+          </p>
         )}
         {errors.checkOut && (
-          <p className="mt-2 text-xs font-medium text-[#b42318]">{errors.checkOut.message}</p>
+          <p className="mt-2 text-xs font-medium text-[#b42318]">
+            {errors.checkOut.message}
+          </p>
         )}
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">
         <Field label="Số khách" error={errors.guests?.message}>
-          <Input {...register("guests", { valueAsNumber: true })} min={1} max={5} type="number" className="w-full" />
+          <Input
+            {...register("guests", { valueAsNumber: true })}
+            min={1}
+            max={5}
+            type="number"
+            className="w-full"
+          />
         </Field>
         <Field label="Nguồn khách biết đến" error={errors.source?.message}>
           <Select {...register("source")} className="w-full">
@@ -103,7 +126,11 @@ export function BookingForm() {
       </div>
 
       <Field label="Ghi chú" error={errors.note?.message}>
-        <Textarea {...register("note")} placeholder="Thời gian đến, nhu cầu BBQ, lưu ý khác..." rows={4} />
+        <Textarea
+          {...register("note")}
+          placeholder="Thời gian đến, nhu cầu BBQ, lưu ý khác..."
+          rows={4}
+        />
       </Field>
 
       <Button
@@ -130,7 +157,9 @@ function Field({
     <label className="grid gap-2 text-sm font-medium text-[#3a2a1d] w-full">
       {label}
       {children}
-      {error ? <span className="text-xs font-medium text-[#b42318]">{error}</span> : null}
+      {error ? (
+        <span className="text-xs font-medium text-[#b42318]">{error}</span>
+      ) : null}
     </label>
   );
 }

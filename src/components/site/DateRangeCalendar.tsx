@@ -45,9 +45,7 @@ export function DateRangeCalendar({
     const fetchBlockedDates = async (showLoading = true) => {
       if (showLoading) setLoading(true);
       try {
-        const res = await fetch(
-          `/api/bookings/blocked-dates?roomId=${roomId}`
-        );
+        const res = await fetch(`/api/bookings/blocked-dates?roomId=${roomId}`);
         const data = await res.json();
         setBlockedDates(new Set(data.blockedDates || []));
       } catch (error) {
@@ -96,7 +94,8 @@ export function DateRangeCalendar({
     const monthNum = month.getMonth();
     const dateStr = `${year}-${String(monthNum + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-    const isPast = new Date(year, monthNum, day) < new Date(new Date().setHours(0, 0, 0, 0));
+    const isPast =
+      new Date(year, monthNum, day) < new Date(new Date().setHours(0, 0, 0, 0));
 
     // Check if date is blocked or past
     if (blockedDates.has(dateStr) || isPast) {
@@ -131,13 +130,13 @@ export function DateRangeCalendar({
 
   const handlePrevMonth = () => {
     setCurrentMonth(
-      new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1)
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1),
     );
   };
 
   const handleNextMonth = () => {
     setCurrentMonth(
-      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1)
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1),
     );
   };
 
@@ -147,7 +146,10 @@ export function DateRangeCalendar({
     setIsOpen(false);
   };
 
-  const nextMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1);
+  const nextMonth = new Date(
+    currentMonth.getFullYear(),
+    currentMonth.getMonth() + 1,
+  );
 
   const isDateBetween = (day: number, month: Date): boolean => {
     const year = month.getFullYear();
@@ -187,7 +189,12 @@ export function DateRangeCalendar({
     const monthNum = month.getMonth();
     const dateStr = `${year}-${String(monthNum + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-    if (value?.checkIn && !value?.checkOut && hoverDate && dateStr === hoverDate) {
+    if (
+      value?.checkIn &&
+      !value?.checkOut &&
+      hoverDate &&
+      dateStr === hoverDate
+    ) {
       const start = new Date(value.checkIn + "T00:00:00");
       const hover = new Date(hoverDate + "T00:00:00");
       if (hover > start) return true;
@@ -232,7 +239,9 @@ export function DateRangeCalendar({
             const isToday =
               new Date().toDateString() ===
               new Date(year, monthNum, day).toDateString();
-            const isPast = new Date(year, monthNum, day) < new Date(new Date().setHours(0, 0, 0, 0));
+            const isPast =
+              new Date(year, monthNum, day) <
+              new Date(new Date().setHours(0, 0, 0, 0));
 
             let isDisabledByOverlap = false;
             if (value?.checkIn && !value?.checkOut) {
@@ -252,7 +261,8 @@ export function DateRangeCalendar({
               }
             }
 
-            const isDisabled = isBlocked || isPast || disabled || isDisabledByOverlap;
+            const isDisabled =
+              isBlocked || isPast || disabled || isDisabledByOverlap;
 
             return (
               <button
@@ -269,13 +279,13 @@ export function DateRangeCalendar({
                     ? "text-gray-300 cursor-not-allowed pointer-events-none"
                     : isDisabledByOverlap
                       ? "text-gray-300 cursor-not-allowed bg-gray-50 pointer-events-none"
-                    : isBetween
-                      ? "bg-[#f0f2f5] text-[#1a1a1a]"
-                      : isCheckIn || isCheckOut
-                        ? "bg-[#006ce4] text-white rounded outline outline-1 outline-offset-2 outline-[#006ce4]"
-                        : isToday
-                          ? "border border-[#006ce4] text-[#006ce4] bg-white rounded"
-                          : "bg-white text-[#1a1a1a] hover:bg-[#f0f2f5] rounded"
+                      : isBetween
+                        ? "bg-[#f0f2f5] text-[#1a1a1a]"
+                        : isCheckIn || isCheckOut
+                          ? "bg-[#006ce4] text-white rounded outline outline-1 outline-offset-2 outline-[#006ce4]"
+                          : isToday
+                            ? "border border-[#006ce4] text-[#006ce4] bg-white rounded"
+                            : "bg-white text-[#1a1a1a] hover:bg-[#f0f2f5] rounded"
                 }`}
               >
                 {day}
@@ -302,8 +312,8 @@ export function DateRangeCalendar({
             placeholder="Chọn ngày"
             onClick={() => setIsOpen(true)}
             className={`w-full px-3 py-2 border rounded-lg bg-white text-[#2f241b] cursor-pointer transition-all outline-none ${
-              isOpen && (!value?.checkIn || (value?.checkIn && value?.checkOut)) 
-                ? "border-[#006ce4] ring-1 ring-[#006ce4]" 
+              isOpen && (!value?.checkIn || (value?.checkIn && value?.checkOut))
+                ? "border-[#006ce4] ring-1 ring-[#006ce4]"
                 : "border-[#d4b5a0] hover:border-[#594536]"
             }`}
           />
@@ -319,8 +329,8 @@ export function DateRangeCalendar({
             placeholder="Chọn ngày"
             onClick={() => setIsOpen(true)}
             className={`w-full px-3 py-2 border rounded-lg bg-white text-[#2f241b] cursor-pointer transition-all outline-none ${
-              isOpen && value?.checkIn && !value?.checkOut 
-                ? "border-[#006ce4] ring-1 ring-[#006ce4]" 
+              isOpen && value?.checkIn && !value?.checkOut
+                ? "border-[#006ce4] ring-1 ring-[#006ce4]"
                 : "border-[#d4b5a0] hover:border-[#594536]"
             }`}
           />
@@ -373,7 +383,8 @@ export function DateRangeCalendar({
 
           {value?.checkIn && !value?.checkOut && (
             <div className="text-center text-sm bg-blue-50 text-blue-700 py-2 rounded border border-blue-200">
-              Đã chọn ngày nhận: {formatDate(value.checkIn)}. Vui lòng chọn ngày trả phòng.
+              Đã chọn ngày nhận: {formatDate(value.checkIn)}. Vui lòng chọn ngày
+              trả phòng.
             </div>
           )}
 
@@ -381,11 +392,11 @@ export function DateRangeCalendar({
           <div className="flex flex-col sm:flex-row gap-4 overflow-x-auto">
             {renderMonth(
               currentMonth,
-              `${MONTHS[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`
+              `${MONTHS[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`,
             )}
             {renderMonth(
               nextMonth,
-              `${MONTHS[nextMonth.getMonth()]} ${nextMonth.getFullYear()}`
+              `${MONTHS[nextMonth.getMonth()]} ${nextMonth.getFullYear()}`,
             )}
           </div>
 
@@ -400,7 +411,9 @@ export function DateRangeCalendar({
               <span className="text-[#594536]">Khoảng chọn</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 flex items-center justify-center text-gray-300 font-bold text-[10px]">X</div>
+              <div className="w-4 h-4 flex items-center justify-center text-gray-300 font-bold text-[10px]">
+                X
+              </div>
               <span className="text-[#594536]">Đã đặt / Quá khứ</span>
             </div>
             <div className="flex items-center gap-2">
