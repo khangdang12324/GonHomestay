@@ -44,6 +44,9 @@ export const metadata: Metadata = {
     locale: "vi_VN",
     type: "website",
   },
+  verification: {
+    google: "A4eyE7UhfM7-dOfU6QHmtNlNoOPf383ek4_x5UbNJDQ",
+  },
 };
 
 const jsonLd = {
