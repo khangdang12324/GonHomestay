@@ -7,6 +7,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { dateDiffInNights, isSupabaseConfigured } from "@/lib/utils";
 import { bookingSchema, type BookingFormValues } from "@/lib/validations/booking";
 import { sendBookingNotification } from "./booking-email";
+import { sendTelegramMessage } from "./telegram";
 
 export async function createBooking(input: BookingFormValues) {
   return persistBooking(input, "PENDING", "public");
@@ -110,6 +111,18 @@ async function persistBooking(
   const savedMessage = bookingId
     ? `Đã lưu booking thật. Mã booking: ${bookingId.slice(0, 8).toUpperCase()}.`
     : "Đã lưu booking thật vào Supabase.";
+
+  // Send Telegram notification
+  const telegramMessage = `
+🎉 <b>Có khách đặt phòng mới!</b>
+👤 Khách hàng: <b>${values.customerName}</b>
+📞 SĐT: <b>${values.customerPhone}</b>
+📅 Ngày: <b>${values.checkIn}</b> đến <b>${values.checkOut}</b>
+👥 Số khách: <b>${values.guests}</b>
+💰 Tổng tiền: <b>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalPrice)}</b>
+${values.note ? `📝 Ghi chú: <i>${values.note}</i>` : ""}
+`;
+  await sendTelegramMessage(telegramMessage);
 
   return {
     ok: true,
