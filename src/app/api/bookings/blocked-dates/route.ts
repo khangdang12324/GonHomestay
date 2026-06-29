@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     let query = supabase
       .from("bookings")
       .select("check_in, check_out, status")
-      .in("status", ["CONFIRMED", "CHECKED_IN", "CHECKED_OUT"]);
+      .in("status", ["CONFIRMED", "CHECKED_IN", "CHECKED_OUT", "BLOCKED"]);
 
     // If a specific roomId is provided (not 'default'), filter by it.
     // Otherwise, since there's only 1 room in this homestay, we can safely return all confirmed bookings.
@@ -60,10 +60,10 @@ export async function GET(request: NextRequest) {
       const checkIn = new Date(booking.check_in);
       const checkOut = new Date(booking.check_out);
 
-      // Include check-in day and all days until check-out (exclusive)
+      // Include check-in day and all days until check-out (exclusive for bookings, inclusive for BLOCKED)
       for (
         let d = new Date(checkIn);
-        d < checkOut;
+        booking.status === "BLOCKED" ? d <= checkOut : d < checkOut;
         d.setDate(d.getDate() + 1)
       ) {
         const dateStr = d.toISOString().split("T")[0];

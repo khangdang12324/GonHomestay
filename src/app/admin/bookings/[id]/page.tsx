@@ -7,16 +7,18 @@ import { formatDateVN } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const result = await getBookingById(params.id);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const result = await getBookingById(id);
   if (!result.data) return { title: "Booking không tìm thấy" };
   return { title: `Chi tiết booking - ${result.data.customerName}` };
 }
 
-export default async function BookingDetailPage({ params }: { params: { id: string } }) {
+export default async function BookingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdminSession();
 
-  const result = await getBookingById(params.id);
+  const { id } = await params;
+  const result = await getBookingById(id);
 
   if (!result.configured) {
     redirect("/admin/login");

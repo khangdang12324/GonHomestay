@@ -16,9 +16,10 @@ export default async function AdminPage() {
   const result = await getBookings();
   const bookings = result.data;
   const pending = bookings.filter((booking) => booking.status === "PENDING").length;
-  const confirmed = bookings.filter((booking) => booking.status === "CONFIRMED").length;
-  const revenue = bookings.reduce((sum, booking) => sum + booking.totalPrice, 0);
-  const revenueSeries = buildRevenueSeries(bookings);
+  const confirmedBookings = bookings.filter((booking) => booking.status === "CONFIRMED");
+  const confirmed = confirmedBookings.length;
+  const revenue = confirmedBookings.reduce((sum, booking) => sum + booking.totalPrice, 0);
+  const revenueSeries = buildRevenueSeries(confirmedBookings);
 
   return (
     <AdminShell

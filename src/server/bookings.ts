@@ -158,3 +158,74 @@ async function syncCustomer({
     { onConflict: "phone" },
   );
 }
+
+export async function blockRoom(checkIn: string, checkOut: string, note: string) {
+  const adminSupabase = createSupabaseAdminClient();
+  if (!adminSupabase) {
+    return { ok: false, message: "Không có quyền admin." };
+  }
+
+  const { data: room } = await adminSupabase
+    .from("rooms")
+    .select("id")
+    .eq("slug", primaryRoom.slug)
+    .maybeSingle();
+
+  const { data: existingBlocks } = await adminSupabase
+    .from("bookings")
+    .select("id")
+    .eq("status", "BLOCKED")
+    .lte("check_in", checkOut)
+    .gte("check_out", checkIn);
+
+  if (existingBlocks && existingBlocks.length > 0) {
+    return { ok: false, message: "Đã có khóa phòng trong thời gian này. Vui lòng mở khóa trước hoặc chọn ngày khác." };
+  }
+
+  const payload = {
+    room_id: room?.id || null,
+    customer_name: "[ĐÓNG PHÒNG]",
+    customer_phone: "0000000000",
+    check_in: checkIn,
+    check_out: checkOut,
+    guests: 1,
+    total_price: 0,
+    status: "BLOCKED",
+    note: note || "Khóa phòng",
+    source: "Admin",
+  };
+
+  const result = await adminSupabase.from("bookings").insert(payload);
+
+  if (result.error) {
+    return { ok: false, message: result.error.message };
+  }
+  return { ok: true, message: "Đã khóa phòng thành công." };
+}
+
+export async function unblockRoom(id: string) {
+  const adminSupabase = createSupabaseAdminClient();
+  if (!adminSupabase) return { ok: false, message: "Không có quyền admin." };
+
+  const result = await adminSupabase.from("bookings").delete().eq("id", id).eq("status", "BLOCKED");
+  if (result.error) return { ok: false, message: result.error.message };
+  
+  return { ok: true, message: "Đã mở khóa phòng thành công." };
+}
+
+export async function unblockRoomByDateRange(checkIn: string, checkOut: string) {
+  const adminSupabase = createSupabaseAdminClient();
+  if (!adminSupabase) return { ok: false, message: "Không có quyền admin." };
+
+  // Find and delete all BLOCKED bookings that overlap with the range
+  const result = await adminSupabase
+    .from("bookings")
+    .delete()
+    .eq("status", "BLOCKED")
+    .lte("check_in", checkOut)
+    .gte("check_out", checkIn);
+
+  if (result.error) return { ok: false, message: result.error.message };
+  
+  return { ok: true, message: "Đã mở khóa các ngày được chọn thành công." };
+}
