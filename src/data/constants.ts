@@ -6,7 +6,7 @@ export const siteConfig = {
   phone: "033 867 4316",
   backupPhone: "098 221 1342",
   zalo: "https://zalo.me/0338674316",
-  facebook: "https://www.facebook.com/profile.php?id=61577964718081",
+  facebook: "https://www.facebook.com/profile.php?id=61591639224122",
   address: "Đường 17 Đan Kia, phường Langbiang, Đà Lạt",
   mapEmbedUrl:
     "https://www.google.com/maps?q=G%C3%B4n%20Home%20%C4%90%C6%B0%E1%BB%9Dng%2017%20%C4%90an%20Kia%20ph%C6%B0%E1%BB%9Dng%20Langbiang%20%C4%90%C3%A0%20L%E1%BA%A1t&output=embed",
