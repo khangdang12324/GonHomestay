@@ -103,7 +103,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <SiteHeader />
-        <main>{children}</main>
+        <main className="pb-16 md:pb-0">{children}</main>
         <SiteFooter />
         <FloatingContactBar />
         <Toaster richColors position="top-right" />
